@@ -36,28 +36,16 @@ DROPOUT = 0.1
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-
 class DomainFeatureDataset(Dataset):
-    """Dataset for tabular domain features."""
-
     def __init__(self, X, y):
         self.X = torch.tensor(X, dtype=torch.float32)
         self.y = torch.tensor(y, dtype=torch.float32)
-
     def __len__(self):
         return len(self.X)
-
     def __getitem__(self, index):
         return self.X[index], self.y[index]
 
-
 class TabularTransformerClassifier(nn.Module):
-    """
-    Transformer classifier for tabular numeric features.
-
-    Each numeric feature is treated as one token.
-    """
-
     def __init__(
         self,
         num_features,
@@ -99,10 +87,6 @@ class TabularTransformerClassifier(nn.Module):
         )
 
     def forward(self, x):
-        """
-        x shape:
-            [batch_size, num_features]
-        """
         x = x.unsqueeze(-1)
 
         x = self.feature_projection(x)
@@ -110,7 +94,6 @@ class TabularTransformerClassifier(nn.Module):
 
         x = self.transformer_encoder(x)
 
-        # Mean pooling over feature tokens
         x = x.mean(dim=1)
 
         logits = self.classifier(x).squeeze(-1)
@@ -119,7 +102,6 @@ class TabularTransformerClassifier(nn.Module):
 
 
 def load_dataset(input_path):
-    """Load features, labels, and domains from the input CSV file."""
     raw = pd.read_csv(input_path)
 
     X = raw.loc[:, FEATURE_START:FEATURE_END].to_numpy(dtype=np.float32)
@@ -142,9 +124,7 @@ def load_dataset(input_path):
 
 
 def train_one_epoch(model, dataloader, optimizer, criterion):
-    """Train model for one epoch."""
     model.train()
-
     total_loss = 0.0
 
     for X_batch, y_batch in dataloader:
@@ -165,7 +145,6 @@ def train_one_epoch(model, dataloader, optimizer, criterion):
 
 
 def predict(model, dataloader):
-    """Generate prediction probabilities and labels."""
     model.eval()
 
     all_scores = []
@@ -190,7 +169,6 @@ def predict(model, dataloader):
 
 
 def run_cross_validation(X, y):
-    """Run stratified 10-fold cross-validation using Transformer classifier."""
     skf = StratifiedKFold(
         n_splits=N_SPLITS,
         shuffle=True,
@@ -281,12 +259,10 @@ def run_cross_validation(X, y):
         print(f"  Accuracy = {accuracy:.4f}")
         print(f"  PR-AUC   = {pr_auc:.4f}")
         print(f"  ROC-AUC  = {roc_auc:.4f}")
-
     return results
 
 
 def summarize_results(results):
-    """Print mean and standard deviation of metrics."""
     accuracy = np.array(results["accuracy"])
     pr_auc = np.array(results["pr_auc"])
     roc_auc = np.array(results["roc_auc"])
@@ -297,16 +273,11 @@ def summarize_results(results):
     print(f"PR-AUC   : {pr_auc.mean():.4f} ± {pr_auc.std():.4f}")
     print(f"ROC-AUC  : {roc_auc.mean():.4f} ± {roc_auc.std():.4f}")
 
-
 def main():
     print(f"Using device: {DEVICE}")
-
     X, y, domains = load_dataset(INPUT_PATH)
-
     results = run_cross_validation(X, y)
-
     summarize_results(results)
-
 
 if __name__ == "__main__":
     main()
