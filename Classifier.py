@@ -88,18 +88,13 @@ class TabularTransformerClassifier(nn.Module):
 
     def forward(self, x):
         x = x.unsqueeze(-1)
-
         x = self.feature_projection(x)
         x = x + self.feature_embedding
-
         x = self.transformer_encoder(x)
-
         x = x.mean(dim=1)
-
         logits = self.classifier(x).squeeze(-1)
 
         return logits
-
 
 def load_dataset(input_path):
     raw = pd.read_csv(input_path)
@@ -122,7 +117,6 @@ def load_dataset(input_path):
 
     return X, y, domains
 
-
 def train_one_epoch(model, dataloader, optimizer, criterion):
     model.train()
     total_loss = 0.0
@@ -142,7 +136,6 @@ def train_one_epoch(model, dataloader, optimizer, criterion):
         total_loss += loss.item() * X_batch.size(0)
 
     return total_loss / len(dataloader.dataset)
-
 
 def predict(model, dataloader):
     model.eval()
@@ -260,7 +253,6 @@ def run_cross_validation(X, y):
         print(f"  PR-AUC   = {pr_auc:.4f}")
         print(f"  ROC-AUC  = {roc_auc:.4f}")
     return results
-
 
 def summarize_results(results):
     accuracy = np.array(results["accuracy"])
