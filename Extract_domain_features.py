@@ -53,7 +53,6 @@ FEATURE_HEADER = [
     "private_tld",
 ]
 
-
 def safe_mean(values):
     values = np.asarray(values, dtype=float)
     return float(values.mean()) if values.size else 0.0
@@ -113,7 +112,6 @@ def load_private_tlds(file_path):
     with file_path.open("r", encoding="utf-8") as file:
         return {line.strip() for line in file if line.strip()}
 
-
 def load_ngram_ranks(file_path):
     rank_dict = {}
 
@@ -130,7 +128,6 @@ def load_ngram_ranks(file_path):
                 rank_dict[gram] = int(rank)
             except ValueError:
                 continue
-
     return rank_dict
 
 def load_transition_matrix(file_path):
@@ -146,7 +143,6 @@ def load_transition_matrix(file_path):
             except ValueError:
                 continue
     return transitions
-
 
 def load_gibberish_model(file_path):
     with file_path.open("rb") as file:
