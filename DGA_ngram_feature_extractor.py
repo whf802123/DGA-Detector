@@ -7,23 +7,18 @@ PRIVATE_TLD_PATH = Path("private_tld.txt")
 TRAINING_PATH = Path("training_w_tld.txt")
 NGRAM_RANK_PATH = Path("n_gram_rank_freq.txt")
 OUTPUT_PATH = Path("gram_ranks_training.txt")
-
 UNKNOWN_RANK = 0
-
 
 def average(values):
     return sum(values) / len(values) if values else 0
-
 
 def generate_ngrams(text, n):
     for i in range(len(text) - n + 1):
         yield text[i:i + n]
 
-
 def load_private_tlds(file_path):
     with file_path.open("r", encoding="utf-8") as file:
         return {line.strip() for line in file if line.strip()}
-
 
 def load_ngram_ranks(file_path):
     rank_dict = {}
@@ -43,7 +38,6 @@ def load_ngram_ranks(file_path):
                 continue
 
     return rank_dict
-
 
 def extract_core_domain(domain, private_tlds):
     extracted = tldextract.extract(domain)
@@ -66,7 +60,6 @@ def extract_core_domain(domain, private_tlds):
 
     return f"${core_domain}$"
 
-
 def calculate_ngram_average_rank(text, n, rank_dict, unknown_rank=UNKNOWN_RANK):
     ranks = [
         rank_dict.get(ngram, unknown_rank)
@@ -74,7 +67,6 @@ def calculate_ngram_average_rank(text, n, rank_dict, unknown_rank=UNKNOWN_RANK):
     ]
 
     return average(ranks)
-
 
 def process_training_file(
     training_path,
@@ -130,7 +122,6 @@ def process_training_file(
                 core,
             ])
 
-
 def main():
     private_tlds = load_private_tlds(PRIVATE_TLD_PATH)
     ngram_ranks = load_ngram_ranks(NGRAM_RANK_PATH)
@@ -141,7 +132,6 @@ def main():
         private_tlds=private_tlds,
         ngram_ranks=ngram_ranks,
     )
-
 
 if __name__ == "__main__":
     main()
